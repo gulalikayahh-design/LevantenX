@@ -3,28 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>LevantenX Fashion Lab</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
-        html, body {
+        body, html {
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #000000;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #000;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
-
-        /* Continuous video container with responsive cover scaling */
-        .video-container {
+        /* Video iframe wrapper for full background cover */
+        .video-background {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -33,87 +28,79 @@
             transform: translate(-50%, -50%);
             pointer-events: none;
             z-index: 0;
-            overflow: hidden;
         }
-
-        .video-container iframe,
-        .video-container #player {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100vw;
-            height: 56.25vw; /* 16:9 ratio */
-            min-height: 100vh;
-            min-width: 177.77vh; /* 16:9 ratio */
-            transform: translate(-50%, -50%) scale(1.15);
-            pointer-events: none;
-            border: none;
+        @media (min-aspect-ratio: 16/9) {
+            .video-background iframe {
+                width: 100vw;
+                height: 56.25vw;
+            }
         }
-
-        /* Minimal subtle dark overlay for visual depth */
+        @media (max-aspect-ratio: 16/9) {
+            .video-background iframe {
+                width: 177.78vh;
+                height: 100vh;
+            }
+        }
+        /* Overlay to darken background slightly for contrast */
         .overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.12);
+            background: rgba(0, 0, 0, 0.15);
             z-index: 1;
             pointer-events: none;
         }
     </style>
 </head>
-<body>
+<body class="relative w-screen h-screen overflow-hidden bg-black select-none">
 
-    <div class="video-container">
-        <div id="player"></div>
+    <!-- Arka Plan YouTube Video -->
+    <div class="video-background">
+        <iframe 
+            id="bg-video"
+            src="https://www.youtube-nocookie.com/embed/9x2FvFJbKnM?autoplay=1&mute=1&controls=0&loop=1&playlist=9x2FvFJbKnM&playsinline=1&disablekb=1&fs=0&modestbranding=1&rel=0&enablejsapi=1" 
+            title="LevantenX Background Video" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            referrerpolicy="strict-origin-when-cross-origin"
+            class="w-full h-full border-none">
+        </iframe>
     </div>
 
+    <!-- Karartma Katmanı -->
     <div class="overlay"></div>
 
+    <!-- Sol Alt Transparent Logo (logo.png) -->
+    <div class="fixed bottom-6 left-6 sm:bottom-8 sm:left-8 z-10 flex items-center justify-center pointer-events-none select-none">
+        <img src="logo.png" 
+             alt="LevantenX Logo" 
+             class="h-28 sm:h-36 md:h-44 w-auto object-contain filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
+    </div>
+
+    <!-- Sağ Alt E-posta Butonu -->
     <a href="mailto:ali@makonbi.com" 
        class="fixed bottom-6 right-6 z-10 px-5 py-2.5 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white/90 hover:text-white text-sm tracking-wide font-light border border-white/20 shadow-2xl transition-all duration-300 hover:scale-105 no-underline flex items-center gap-2 select-none">
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-            <rect width="20" height="16" x="2" y="4" rx="2"/>
-            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+        <svg class="w-4 h-4 fill-current opacity-80" viewBox="0 0 24 24">
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
         </svg>
         ali@makonbi.com
     </a>
 
     <script>
-        // Load YouTube IFrame API script asynchronously
-        const tag = document.createElement('script');
+        // YouTube IFrame API - Kesintisiz Döngü (Loop) ve Otomatik Oynatma
+        var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
-        const firstScriptTag = document.getElementsByTagName('script')[0];
+        var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        const videoId = '9x2FvFJbKnM';
-        let player;
-
-        // Called automatically when YouTube API is ready
+        var player;
         function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                videoId: videoId,
-                host: 'https://www.youtube-nocookie.com',
-                playerVars: {
-                    'autoplay': 1,
-                    'controls': 0,
-                    'showinfo': 0,
-                    'rel': 0,
-                    'loop': 1,
-                    'playlist': videoId,
-                    'mute': 1,
-                    'playsinline': 1,
-                    'disablekb': 1,
-                    'iv_load_policy': 3,
-                    'modestbranding': 1,
-                    'enablejsapi': 1,
-                    'origin': window.location.origin || '*'
-                },
+            player = new YT.Player('bg-video', {
                 events: {
                     'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange,
-                    'onError': onPlayerError
+                    'onStateChange': onPlayerStateChange
                 }
             });
         }
@@ -124,33 +111,10 @@
         }
 
         function onPlayerStateChange(event) {
-            // Infinite loop backup trigger
             if (event.data === YT.PlayerState.ENDED) {
                 player.playVideo();
             }
         }
-
-        function onPlayerError(event) {
-            // Fallback iframe injection if API experiences sandbox restrictions
-            const container = document.querySelector('.video-container');
-            const safeOrigin = encodeURIComponent(window.location.origin || '*');
-            container.innerHTML = `<iframe 
-                src="https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&modestbranding=1&playsinline=1&enablejsapi=1&origin=${safeOrigin}" 
-                title="LevantenX Fashion Lab Background"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen>
-            </iframe>`;
-        }
-
-        // Safety fallback check after load
-        window.addEventListener('load', function() {
-            setTimeout(function() {
-                const playerEl = document.getElementById('player');
-                if (playerEl && playerEl.tagName !== 'IFRAME') {
-                    onPlayerError();
-                }
-            }, 2000);
-        });
     </script>
 </body>
 </html>
