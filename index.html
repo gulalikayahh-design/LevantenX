@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LevantenX Fashion Lab</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -17,31 +17,32 @@
             overflow: hidden;
             background-color: #000;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
-        /* Video iframe wrapper for full background cover */
+        /* Video wrapper covering exact screen bounds */
         .video-background {
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
-            transform: translate(-50%, -50%);
+            overflow: hidden;
             pointer-events: none;
             z-index: 0;
         }
-        @media (min-aspect-ratio: 16/9) {
-            .video-background iframe {
-                width: 100vw;
-                height: 56.25vw;
-            }
+        /* Precisely centering the 16:9 iframe at screen center */
+        .video-background iframe {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 56.25vw; /* 16:9 ratio width to height */
+            min-height: 100vh;
+            min-width: 177.78vh; /* 16:9 ratio height to width */
+            transform: translate(-50%, -50%);
+            border: none;
         }
-        @media (max-aspect-ratio: 16/9) {
-            .video-background iframe {
-                width: 177.78vh;
-                height: 100vh;
-            }
-        }
-        /* Overlay to darken background slightly for contrast */
+        /* Touch shield overlay to hide native mobile controls */
         .overlay {
             position: fixed;
             top: 0;
@@ -49,8 +50,8 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.15);
-            z-index: 1;
-            pointer-events: none;
+            z-index: 10;
+            pointer-events: auto;
         }
     </style>
 </head>
@@ -64,24 +65,23 @@
             title="LevantenX Background Video" 
             frameborder="0" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            referrerpolicy="strict-origin-when-cross-origin"
-            class="w-full h-full border-none">
+            referrerpolicy="strict-origin-when-cross-origin">
         </iframe>
     </div>
 
-    <!-- Karartma Katmanı -->
+    <!-- Dokunma Engelleme ve Karartma Katmanı -->
     <div class="overlay"></div>
 
-    <!-- Sol Alt Transparent Logo (logo.png) -->
-    <div class="fixed bottom-6 left-6 sm:bottom-8 sm:left-8 z-10 flex items-center justify-center pointer-events-none select-none">
+    <!-- Ekran Ortasında Sabit Transparent Logo (logo.png) -->
+    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 flex items-center justify-center pointer-events-none select-none w-auto max-w-[85vw]">
         <img src="logo.png" 
              alt="LevantenX Logo" 
-             class="h-28 sm:h-36 md:h-44 w-auto object-contain filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.8)]">
+             class="h-44 sm:h-56 md:h-72 lg:h-80 w-auto max-h-[60vh] object-contain filter drop-shadow-[0_4px_24px_rgba(0,0,0,0.95)]">
     </div>
 
     <!-- Sağ Alt E-posta Butonu -->
     <a href="mailto:ali@makonbi.com" 
-       class="fixed bottom-6 right-6 z-10 px-5 py-2.5 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white/90 hover:text-white text-sm tracking-wide font-light border border-white/20 shadow-2xl transition-all duration-300 hover:scale-105 no-underline flex items-center gap-2 select-none">
+       class="fixed bottom-6 right-4 sm:right-8 z-50 px-5 py-2.5 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md text-white/90 hover:text-white text-sm tracking-wide font-light border border-white/20 shadow-2xl transition-all duration-300 hover:scale-105 no-underline flex items-center gap-2 select-none">
         <svg class="w-4 h-4 fill-current opacity-80" viewBox="0 0 24 24">
             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
         </svg>
